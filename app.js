@@ -6,7 +6,9 @@ const port = process.env.PORT || 3000
 
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
-app.get("/", (req, resp) => resp.json({ message: "Hello world!" }))
+
+const routes = require('./routes')
+app.use(routes)
 
 app.listen(port, () => 
     console.info(`app listening on port ${port}`)
