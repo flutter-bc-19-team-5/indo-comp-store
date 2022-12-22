@@ -15,10 +15,13 @@ module.exports = {
       total: {
         type: Sequelize.INTEGER
       },
-      idCustomer: {
+      paymentMethod: {
+        type: Sequelize.STRING
+      },
+      customerId: {
         type: Sequelize.INTEGER
       },
-      idProduct: {
+      productId: {
         type: Sequelize.INTEGER
       },
       createdAt: {

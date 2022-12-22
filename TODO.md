@@ -12,5 +12,5 @@ npx sequelize-cli model:generate --name customer --attributes "name:string, addr
 
 ### Table payments
 ```bash
-npx sequelize-cli model:generate --name payment --attributes "quantity:integer, total:integer, idCustomer:integer, idProduct:integer"
+npx sequelize-cli model:generate --name payment --attributes "quantity:integer, total:integer, paymentMethod:integer, idCustomer:integer, idProduct:integer"
 ```
