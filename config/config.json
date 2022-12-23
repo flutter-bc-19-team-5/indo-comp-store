@@ -1,8 +1,8 @@
 {
   "development": {
     "username": "postgres",
-    "password": "master",
-    "database": "indoCompStore_db",
+    "password": "9809poiiop",
+    "database": "bootcamp_indo_comp_store",
     "host": "127.0.0.1",
     "dialect": "postgres"
   },

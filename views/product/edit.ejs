@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+  <meta http-equiv="x-ua-compatible" content="ie=edge" />
+  <title>Dashboard</title>
+
+  <%- include("../component/lib/header.ejs") %>
+</head>
+
+<body>
+  <!--Main Navigation-->
+  <%- include("../component/navigation.ejs", { select: "product" }) %>
+    <!--Main Navigation-->
+
+    <!--Main layout-->
+    <main style="margin-top: 58px">
+      <div class="container pt-4">
+        <%- include("../component/breadcumb", { list: ["All products", "Info product", "Update product"] }) %>
+        <!--Section: Update Product-->
+        <section class="mb-4">
+          <div class="card">
+            <div class="card-header text-center py-3">
+              <h5 class="mb-0 text-center">
+                <strong>Update Product</strong>
+              </h5>
+            </div>
+            <!-- name type brand price stock -->
+            <div class="card-body">
+              <div class="row justify-content-center">
+                <form class="col-md-6" action="/product/update/<%= fields?.id %>" method="post" onsubmit="onSubmit()">
+                  <div class="form-outline my-3">
+                    <input required name="name" value="<%= fields?.name %>" type="text" id="ProductName" class="form-control" />
+                    <label class="form-label" for="ProductName">Product name</label>
+                  </div>
+                  <div class="form-outline my-3">
+                    <input required name="type" value="<%= fields?.type %>" type="text" id="Type" class="form-control" />
+                    <label class="form-label" for="Type">Product type</label>
+                  </div>
+                  <div class="form-outline my-3">
+                    <input required name="brand" value="<%= fields?.brand %>" type="text" id="Brand" class="form-control" />
+                    <label class="form-label" for="Brand">Brand</label>
+                  </div>
+                  <div class="form-outline my-3">
+                    <input required name="stock" value="<%= fields?.stock %>" type="number" id="Stock" class="form-control" />
+                    <label class="form-label" for="Stock">Stock</label>
+                  </div>
+                  <div class="form-outline my-3">
+                    <input required name="price" value="<%= fields?.price %>" type="number" id="Price" class="form-control" />
+                    <label class="form-label" for="Price">Price</label>
+                  </div>
+                  
+                  <% if (error) { %>
+                    <div class="alert alert-danger" role="alert">
+                      <%= error %>
+                    </div>
+                  <% } %>
+                  <button id="btn-submit" type="submit" class="btn btn-primary">
+                    <i class="fas fa-tag fa-fw me-3"></i> Update
+                  </button>
+                </form>
+              </div>
+            </div>
+          </div>
+        </section>
+        <!--Section: Update Product-->
+      </div>
+    </main>
+    <!--Main layout-->
+    <%- include("../component/lib/footer.ejs") %>
+</body>
+
+</html>

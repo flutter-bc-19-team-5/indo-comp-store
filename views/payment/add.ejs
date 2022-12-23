@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+  <meta http-equiv="x-ua-compatible" content="ie=edge" />
+  <title>Dashboard</title>
+
+  <%- include("../component/lib/header.ejs") %>
+</head>
+
+<body>
+  <!--Main Navigation-->
+  <%- include("../component/navigation.ejs", { select: "new-payment" }) %>
+    <!--Main Navigation-->
+
+    <!--Main layout-->
+    <main style="margin-top: 58px">
+      <div class="container pt-4">
+        <%- include("../component/breadcumb", { list: ["New payment"] }) %>
+        <!--Section: New Payment-->
+        <section class="mb-4">
+          <div class="card">
+            <div class="card-header text-center py-3">
+              <h5 class="mb-0 text-center">
+                <strong>New Payment</strong>
+              </h5>
+            </div>
+            <!-- name type brand price stock -->
+            <div class="card-body">
+              <div class="row justify-content-center">
+                <form class="col-md-6" action="/payment/add" method="post" onsubmit="onSubmit()">
+
+                  <select name="customerId" class="form-select my-3" aria-label="Select customer option">
+                    <% fields?.customers?.forEach(customer => { %>
+                      <option value="<%= customer.id %>"><%= customer.name %></option>
+                    <% }) %>
+                  </select>
+                    
+                  <select name="productId" class="form-select my-3" aria-label="Select product option">
+                    <% fields?.products?.forEach(product => { %>
+                        <option value="<%= product.id %>"><%= product.name %></option>
+                    <% }) %>
+                  </select>
+                  <select name="paymentMethod" class="form-select my-3" aria-label="Select paymentMethod option">
+                    <% ["Cash", "Bank transfer", "Ewallet"].forEach(mtd => { %>
+                        <option value="<%= mtd.toLowerCase().replace(' ', '_') %>"><%= mtd %></option>
+                    <% }) %>
+                  </select>
+                  <div class="form-outline my-3">
+                    <input required name="quantity" value="<%= fields?.quantity %>" type="number" id="Quantity" class="form-control" />
+                    <label class="form-label" for="Quantity">Quantity</label>
+                  </div>
+                  <% if (error) { %>
+                    <div class="alert alert-danger" role="alert">
+                      <%= error.message %>
+                    </div>
+                  <% } %>
+                  <button id="btn-submit" type="submit" class="btn btn-primary">
+                    <i class="fas fa-money-bill fa-fw me-3"></i> Post
+                  </button>
+                </form>
+              </div>
+            </div>
+          </div>
+        </section>
+        <!--Section: New Payment-->
+      </div>
+    </main>
+    <!--Main layout-->
+    <%- include("../component/lib/footer.ejs") %>
+</body>
+
+</html>

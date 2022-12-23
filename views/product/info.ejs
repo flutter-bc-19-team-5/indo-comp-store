@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+  <meta http-equiv="x-ua-compatible" content="ie=edge" />
+  <title>Dashboard</title>
+
+  <%- include("../component/lib/header.ejs") %>
+</head>
+
+<body>
+  <!--Main Navigation-->
+  <%- include("../component/navigation.ejs", { select: "product" }) %>
+    <!--Main Navigation-->
+
+    <!--Main layout-->
+    <main style="margin-top: 58px">
+      <div class="container pt-4">
+        <!--Section: Info Product-->
+        <%- include("../component/breadcumb", { list: ["All products", "Info product"] }) %>
+        <section class="mb-4">
+          <div class="card">
+            <div class="card-header text-center py-3">
+              <h5 class="mb-0 text-center">
+                <strong>Info Product</strong>
+              </h5>
+            </div>
+            <% if(!error) { %> 
+            <div class="card-body">
+              <div class="row justify-content-center">
+                <div class="col-md-12">
+                  <div class="card shadow-0">
+                    <!-- <img src="../../img/store.png" class="card-img-top" alt="..."> -->
+                    <div class="card-body">
+                      <h5 class="card-title"><%= fields.name %></h5>
+                      <p class="card-text"><%= fields.type %></p>
+                      <p class="card-text"><%= fields.brand %></p>
+                      <p class="card-text">Stock <span class="badge rounded-pill bg-success"><%= fields.stock %></span></p>
+                      <a href="../editPage/<%= fields.id %>" class="btn btn-outline-dark">Edit product</a>
+                      <a href="../delete/<%= fields.id %>" class="btn btn-outline-warning">Delete product</a>
+                    </div>
+                  </div><br />
+                  <div class="list-group">
+                    <% fields.customers.forEach((customer, i) => { %>
+                      <a href="#" class="list-group-item list-group-item-action <%= i < 1 && 'active' %>" aria-current="true">
+                        <div class="d-flex w-100 justify-content-between">
+                          <h5 class="mb-1"><%= customer.name %></h5>
+                          <small><%= customer.createdAt.toString().split(" ").slice(0, 3).join(" ") %></small>
+                        </div>
+                        <p class="mb-1"><%= customer.address %></p>
+                        <small><%= customer.phone %></small>
+                      </a>
+                    <% }) %>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <%} else {%>
+              <div class="alert alert-danger" role="alert">
+                <%= error.message %>
+              </div>
+            <%}%>
+          </div>
+        </section>
+        <!--Section: Info Product-->
+      </div>
+    </main>
+    <!--Main layout-->
+    <%- include("../component/lib/footer.ejs") %>
+</body>
+
+</html>

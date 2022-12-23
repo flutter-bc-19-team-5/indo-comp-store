@@ -1,19 +1,43 @@
-const { product } = require('../models')
+const { product, customer, PageState } = require('../models')
 
 class ProductController {
     //EJS Page
     static async getData(req, res) {
         try {
-            let response = await product.findAll()
-            return res.json(response)
+            let products = await product.findAll()
+            res.render("./product/index.ejs", { products })
         } catch (err) {
-            return res.json({ message: err })
+            res.json({ message: err })
         }
     }
 
-    static addProductPage = (req, res) => res.render('')
-    static editProductPage = (req, res) => res.render('')
+    static addProductPage = (req, res) => res.render('./product/add.ejs', new PageState())
+    
+    static editProductPage = async (req, res) => {
+        const { id } = req.params
+        try {
+            const response = await product.findByPk(id)
+            res.render('./product/edit.ejs', new PageState(response))
+        } catch (error) {
+            res.render('./product/edit.ejs', new PageState(null, error))
+        }
+    }
+    static infoProductPage = async (req, res) => {
+        const { id } = req.params
+        const state = new PageState({})
+        try {
+            const response = await product.findByPk(id, {
+                include: customer
+            })
+            if (response) state.fields = response
+            else state.error = { message: "Not found" }
 
+            res.render('./product/info.ejs', state)
+        } catch (error) {
+            state.error = error
+            res.render('./product/info.ejs', state)
+        }
+    }
     //CRUD
     static async addProduct(req, res) {
         try {
@@ -25,9 +49,9 @@ class ProductController {
                 price: price,
                 stock: stock
             })
-            return res.json({ message: "new Product has been added" })
+            res.redirect("../../product")
         } catch (err) {
-            return res.json({ message: err })
+            res.render("./product/edit.ejs", new PageState(req.body, err))
         }
     }
 
@@ -35,9 +59,9 @@ class ProductController {
         try {
             const id = +req.params.productId
             let response = await product.destroy({ where: { id: id } })
-            return res.json({ message: "Product has been deleted" })
+            res.redirect("../../product")
         } catch (err) {
-            return res.json({ message: err })
+            res.render("./product/edit.ejs", new PageState(null, err))
         }
     }
 
@@ -47,9 +71,9 @@ class ProductController {
             const { name, type, brand, price, stock } = req.body
             let response = await product.update({ name, type, brand, price, stock },
                 { where: { id: id } })
-            return res.json({ message: `Product ${id} has been updated` })
+            res.redirect("../../product")
         } catch (err) {
-            return res.json({ message: err })
+            res.render("./product/edit.ejs", new PageState(req.body, err))
         }
     }
 
