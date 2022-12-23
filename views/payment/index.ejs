@@ -16,6 +16,7 @@
     <!--Main layout-->
     <main style="margin-top: 58px">
       <div class="container pt-4">
+        <%- include("../component/breadcumb", { list: ["All payments"] }) %>
         <!--Section: Payments-->
         <section class="mb-4">
           <div class="card">
@@ -30,11 +31,12 @@
                   <thead>
                     <tr>
                       <th scope="col"></th>
+                      <th scope="col">Date</th>
+                      <th scope="col">Payment method</th>
+                      <th scope="col">Customer</th>
+                      <th scope="col">Product</th>
                       <th scope="col">Quantity</th>
                       <th scope="col">Total</th>
-                      <th scope="col">Payment method</th>
-                      <th scope="col">Customer id</th>
-                      <th scope="col">Product id</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -43,20 +45,36 @@
                         <th scope="row">
                           <%= i +1 %>
                         </th>
+                        <td> <%= 
+                          payment.createdAt
+                            .toString()
+                            .split(" ")
+                            .slice(0, 3)
+                            .join(" ") %>
+                        </td>
+                        <td class="text-align-center">
+                          <% switch(payment.paymentMethod){
+                            case 'cash': %><i class="fas fa-money-bill fa-fw"></i><%
+                              break
+                            case 'bank_transfer': %><i class="fas fa-landmark fa-fw"></i><%
+                              break
+                            case 'ewallet': %><i class="fas fa-wallet fa-fw"></i><%
+                              break
+                            default : payment.paymentMethod
+                              break
+                          } %>
+                        </td>
+                        <td>
+                          <%= payment.customer?.name || payment.customerId %>
+                        </td>
+                        <td>
+                          <%= payment.product?.name || payment.productId %>
+                        </td>
                         <td>
                           <%= payment.quantity %>
                         </td>
                         <td>
                           <%= payment.total %>
-                        </td>
-                        <td>
-                          <%= payment.paymentMethod %>
-                        </td>
-                        <td>
-                          <%= payment.customerId %>
-                        </td>
-                        <td>
-                          <%= payment.productId %>
                         </td>
                       </tr>
                     <% }) %>

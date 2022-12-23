@@ -19,6 +19,7 @@
     <main style="margin-top: 58px">
       <div class="container pt-4">
         <!--Section: New Customer-->
+        <%- include("../component/breadcumb", { list: ["New Customer"] }) %>
         <section class="mb-4">
           <div class="card">
             <div class="card-header text-center py-3">
@@ -43,7 +44,7 @@
                   </div>
                   <% if (error) { %>
                     <div class="alert alert-danger" role="alert">
-                      <%= error %>
+                      <%= error.message %>
                     </div>
                   <% } %>
                   <button id="btn-submit" type="submit" class="btn btn-primary">

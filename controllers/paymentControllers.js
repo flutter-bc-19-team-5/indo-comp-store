@@ -1,4 +1,4 @@
-const { customer, payment, product } = require('../models')
+const { customer, payment, product, PageState } = require('../models')
 
 class PaymentController {
     //EJS Page
@@ -13,23 +13,69 @@ class PaymentController {
         }
     }
 
-    static addPaymentPage = (req, res) => res.render('')
-    static editPaymentPage = (req, res) => res.render('')
+    static addPaymentPage = async (req, res) => {
+        let data = new PageState()
+        try {
+            data.setFields({})
+            data.fields.customers = await customer.findAll()
+            data.fields.products = await product.findAll()
 
+            res.render('./payment/add.ejs', data)
+        } catch (error) {
+            data.error = error.message
+            res.render('./payment/add.ejs', data)
+        }
+    }
+    static editPaymentPage = async (req, res) => {
+        const { id } = req.params
+        try {
+            const response = await payment.findByPk(id)
+            res.render('./payment/add.ejs', new PageState(response))
+        } catch (error) {
+            res.render('./payment/add.ejs', new PageState(null, error))
+        }
+    }
+
+    static infoPaymentPage = async (req, res) => {
+        const { id } = req.params
+        try {
+            const response = await payment.findByPk(id, {
+                include: [product, customer]
+            })
+            res.render('./payment/info.ejs', new PageState(response))
+        } catch (error) {
+            res.render('./payment/info.ejs', new PageState(null, error))
+        }
+    }
     //CRUD
     static async addPayment(req, res) {
+        let data = new PageState({})
         try {
-            const { quantity, total, paymentMethod, customerId, productId } = req.body
-            let response = await payment.create({
-                quantity: quantity,
-                total: total,
-                paymentMethod: paymentMethod,
-                customerId: customerId,
-                productId: productId
-            })
-            return res.json({ message: "new Payment has been added" })
+            const { quantity, paymentMethod, customerId, productId } = req.body
+            const productResponse = await product.findByPk(productId)
+            
+            productResponse.stock -= quantity
+            if (productResponse.stock >= 0){
+                await product.update(productResponse.dataValues, { where: { id: productId } })
+                await payment.create({
+                    quantity: quantity,
+                    total: productResponse.price * quantity,
+                    paymentMethod: paymentMethod,
+                    customerId: customerId,
+                    productId: productId
+                })
+                res.redirect("/")
+            } else {
+                data.fields = req.body
+                data.fields.customers = await customer.findAll()
+                data.fields.products = await product.findAll()
+                data.error = { message: "there is no stock left" }
+
+                res.render('./payment/add.ejs', data)
+            }
         } catch (err) {
-            return res.json({ message: err })
+            data.error = err
+            res.render('./payment/add.ejs', data)
         }
     }
 

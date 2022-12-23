@@ -4,7 +4,8 @@ const { ProductController } = require('../controllers')
 //EJS Page
 productRoutes.get('/', ProductController.getData)
 productRoutes.get('/addPage', ProductController.addProductPage)
-productRoutes.get('/editPage', ProductController.editProductPage)
+productRoutes.get('/editPage/:id', ProductController.editProductPage)
+productRoutes.get('/infoPage/:id', ProductController.infoProductPage)
 
 //CRUD
 productRoutes.post('/add', ProductController.addProduct)

@@ -5,6 +5,7 @@ const { PaymentController } = require('../controllers')
 paymentRoutes.get('/', PaymentController.getData)
 paymentRoutes.get('/addPage', PaymentController.addPaymentPage)
 paymentRoutes.get('/editPage', PaymentController.editPaymentPage)
+paymentRoutes.get('/infoPage/:id', PaymentController.infoPaymentPage)
 
 //CRUD
 paymentRoutes.post('/add', PaymentController.addPayment)

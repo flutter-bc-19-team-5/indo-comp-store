@@ -1,7 +1,7 @@
 const route = require('express').Router()
 
 route.get('/', (req, res) => {
-    res.render('./index.ejs')
+    res.redirect("payment") // res.render('./index.ejs')
 })
 
 const customerRoutes = require('./customerRoutes.js')

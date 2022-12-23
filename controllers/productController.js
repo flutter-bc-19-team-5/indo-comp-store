@@ -1,4 +1,4 @@
-const { product, customer } = require('../models')
+const { product, customer, PageState } = require('../models')
 
 class ProductController {
     //EJS Page
@@ -11,9 +11,28 @@ class ProductController {
         }
     }
 
-    static addProductPage = (req, res) => res.render('')
-    static editProductPage = (req, res) => res.render('')
-
+    static addProductPage = (req, res) => res.render('./product/add.ejs', new PageState())
+    
+    static editProductPage = async (req, res) => {
+        const { id } = req.params
+        try {
+            const response = await product.findByPk(id)
+            res.render('./product/edit.ejs', new PageState(response))
+        } catch (error) {
+            res.render('./product/edit.ejs', new PageState(null, error))
+        }
+    }
+    static infoProductPage = async (req, res) => {
+        const { id } = req.params
+        try {
+            const response = await product.findByPk(id, {
+                include: customer
+            })
+            res.render('./product/info.ejs', new PageState(response))
+        } catch (error) {
+            res.render('./product/info.ejs', new PageState(null, error))
+        }
+    }
     //CRUD
     static async addProduct(req, res) {
         try {

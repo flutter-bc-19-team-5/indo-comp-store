@@ -15,58 +15,62 @@ class CustomerController {
     static addCustomerPage = (req, res) => res.render('./customer/add.ejs', new PageState())
 
     static editCustomerPage = async (req, res) => {
+        const state = new PageState()
         const { id } = req.params
         try {
             const response = await customer.findByPk(id)
-            res.render('./customer/edit.ejs', new PageState(response))
+            state.fields = response
+            res.render('./customer/edit.ejs', state)
         } catch (error) {
-            res.render('./customer/edit.ejs', new PageState(null, error.message))
+            state.error = error
+            res.render('./customer/edit.ejs', state)
         }
     }
     static infoCustomerPage = async (req, res) => {
+        const state = new PageState()
         const { id } = req.params
         try {
             const response = await customer.findByPk(id, {
                 include: product
             })
-            res.render('./customer/info.ejs', new PageState(response))
+            if (response) state.fields = response
+            else state.error = {message: "Not found"}
+            res.render('./customer/info.ejs', state)
         } catch (error) {
-            res.render('./customer/info.ejs', new PageState(null, error))
+            state.error = error
+            res.render('./customer/info.ejs', state)
         }
     }
     //CRUD
     static async addCustomer(req, res) {
         try {
             const { name, address, phone } = req.body
-            /*
-                let response = await customer.create({
-                    name: name,
-                    address: address,
-                    phone: phone,
-                })
-            */
-           const response = await new Promise((resolve, reject) => {
-            setTimeout(() => {
-                reject(true)
-            }, 1000);
-           })
-            let data = response
+            let response = await customer.create({
+               name: name,
+               address: address,
+               phone: phone,
+            })
+            /*let data = response
                 ? res.json({ message: "new Customer has been added" })
-                : res.json({ message: response })
+                : res.json({ message: response })*/
 
-            res.redirect("./customer", data)
+            res.redirect("./customer")
         } catch (err) {
             res.render("./customer/add.ejs", new PageState(req.body, err))
         }
     }
-
     static async deleteCustomer(req, res) {
         try {
             const id = +req.params.customerId
-            let response = await customer.destroy({ where: { id: id } })
-            return res.json({ message: "Customer has been deleted" })
+            await customer.destroy({ where: { id: id } })
+            /*let message = response === 1 
+                ? "Customer has been deleted" 
+                : `Couldn\'t delete customer id ${id}`*/
+            res.redirect("/customer")
+
         } catch (err) {
-            return res.json({ message: err })
+            state.error = err
+            res.redirect("/customer")
         }
     }
 
@@ -74,20 +78,14 @@ class CustomerController {
         try {
             const id = +req.params.customerId
             const { name, address, phone } = req.body
-            // let response = await customer.update({ name, address, phone },
-            //     { where: { id: id } })
+            let response = await customer.update({ name, address, phone },
+                { where: { id: id } })
 
-           const response = await new Promise((resolve, reject) => {
-            setTimeout(() => {
-                reject(true)
-            }, 1000);
-           })
-
-           let data = response
+           /*let data = response
             ? res.json({ message: `Customer ${id} has been updated` })
-            : res.json({ message: response })
+            : res.json({ message: response })*/
             
-            res.redirect("./customer", data)
+            res.redirect("./customer")
         } catch (err) {
             res.render("./customer/add.ejs", new PageState(req.body, err))
         }
