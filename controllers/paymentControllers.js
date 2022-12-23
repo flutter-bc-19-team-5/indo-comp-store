@@ -3,13 +3,15 @@ const { customer, payment, product, PageState } = require('../models')
 class PaymentController {
     //EJS Page
     static async getData(req, res) {
+        const state = new PageState({})
         try {
-            let payments = await payment.findAll({
-                include: [customer, product]
+            state.payments = await payment.findAll({
+                include: [product, customer]
             })
-            res.render("./payment/index.ejs", { payments })
+            res.render("./payment/index.ejs", state)
         } catch (err) {
-            res.json({ message: err })
+            state.error = err
+            res.render("./payment/index.ejs", state)
         }
     }
 
@@ -30,9 +32,9 @@ class PaymentController {
         const { id } = req.params
         try {
             const response = await payment.findByPk(id)
-            res.render('./payment/add.ejs', new PageState(response))
+            res.render('./payment/edit.ejs', new PageState(response))
         } catch (error) {
-            res.render('./payment/add.ejs', new PageState(null, error))
+            res.render('./payment/edit.ejs', new PageState(null, error))
         }
     }
 
@@ -64,7 +66,7 @@ class PaymentController {
                     customerId: customerId,
                     productId: productId
                 })
-                res.redirect("/")
+                res.redirect("../../payment")
             } else {
                 data.fields = req.body
                 data.fields.customers = await customer.findAll()

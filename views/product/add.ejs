@@ -47,6 +47,10 @@
                     <input required name="stock" value="<%= fields?.stock %>" type="number" id="Stock" class="form-control" />
                     <label class="form-label" for="Stock">Stock</label>
                   </div>
+                  <div class="form-outline my-3">
+                    <input required name="price" value="<%= fields?.price %>" type="number" id="Price" class="form-control" />
+                    <label class="form-label" for="Price">Price</label>
+                  </div>
                   
                   <% if (error) { %>
                     <div class="alert alert-danger" role="alert">

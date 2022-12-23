@@ -27,14 +27,15 @@ class CustomerController {
         }
     }
     static infoCustomerPage = async (req, res) => {
-        const state = new PageState()
         const { id } = req.params
+        const state = new PageState({})
         try {
             const response = await customer.findByPk(id, {
                 include: product
             })
             if (response) state.fields = response
-            else state.error = {message: "Not found"}
+            else state.error = { message: "Not found" }
+            
             res.render('./customer/info.ejs', state)
         } catch (error) {
             state.error = error
@@ -54,23 +55,25 @@ class CustomerController {
                 ? res.json({ message: "new Customer has been added" })
                 : res.json({ message: response })*/
 
-            res.redirect("./customer")
+            res.redirect("../../customer")
         } catch (err) {
             res.render("./customer/add.ejs", new PageState(req.body, err))
         }
     }
     static async deleteCustomer(req, res) {
+        const state = new PageState({})
         try {
             const id = +req.params.customerId
             await customer.destroy({ where: { id: id } })
             /*let message = response === 1 
                 ? "Customer has been deleted" 
                 : `Couldn\'t delete customer id ${id}`*/
-            res.redirect("/customer")
+            res.redirect("../../customer")
 
         } catch (err) {
+            state.fields = req.body
             state.error = err
-            res.redirect("/customer")
+            res.render("./customer/info.ejs", state)
         }
     }
 
@@ -85,9 +88,9 @@ class CustomerController {
             ? res.json({ message: `Customer ${id} has been updated` })
             : res.json({ message: response })*/
             
-            res.redirect("./customer")
+            res.redirect("../../customer")
         } catch (err) {
-            res.render("./customer/add.ejs", new PageState(req.body, err))
+            res.render("./customer/edit.ejs", new PageState(req.body, err))
         }
     }
 
