@@ -1,13 +1,13 @@
-const { product } = require('../models')
+const { product, customer } = require('../models')
 
 class ProductController {
     //EJS Page
     static async getData(req, res) {
         try {
-            let response = await product.findAll()
-            return res.json(response)
+            let products = await product.findAll()
+            res.render("./product/index.ejs", { products })
         } catch (err) {
-            return res.json({ message: err })
+            res.json({ message: err })
         }
     }
 

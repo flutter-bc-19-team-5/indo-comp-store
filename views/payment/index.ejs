@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+  <meta http-equiv="x-ua-compatible" content="ie=edge" />
+  <title>Payment</title>
+
+  <%- include("../component/lib/header.ejs") %>
+</head>
+<body>
+    <!--Main Navigation-->
+    <%- include("../component/navigation.ejs", { select: "payment" }) %>
+    <!--Main Navigation-->
+  
+    <!--Main layout-->
+    <main style="margin-top: 58px">
+      <div class="container pt-4">
+        <!--Section: Payments-->
+        <section class="mb-4">
+          <div class="card">
+            <div class="card-header text-center py-3">
+              <h5 class="mb-0 text-center">
+                <strong>Payments</strong>
+              </h5>
+            </div>
+            <div class="card-body">
+              <div class="table-responsive">
+                <table class="table table-hover text-nowrap">
+                  <thead>
+                    <tr>
+                      <th scope="col"></th>
+                      <th scope="col">Quantity</th>
+                      <th scope="col">Total</th>
+                      <th scope="col">Payment method</th>
+                      <th scope="col">Customer id</th>
+                      <th scope="col">Product id</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <% payments.forEach((payment, i)=> { %>
+                      <tr>
+                        <th scope="row">
+                          <%= i +1 %>
+                        </th>
+                        <td>
+                          <%= payment.quantity %>
+                        </td>
+                        <td>
+                          <%= payment.total %>
+                        </td>
+                        <td>
+                          <%= payment.paymentMethod %>
+                        </td>
+                        <td>
+                          <%= payment.customerId %>
+                        </td>
+                        <td>
+                          <%= payment.productId %>
+                        </td>
+                      </tr>
+                    <% }) %>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </section>
+        <!--Section: Payments-->
+      </div>
+    </main>
+    <!--Main layout-->
+    <%- include("../component/lib/footer.ejs") %>
+</body>
+
+</html>

@@ -4,14 +4,12 @@ class PaymentController {
     //EJS Page
     static async getData(req, res) {
         try {
-            let response = await payment.findAll({
+            let payments = await payment.findAll({
                 include: [customer, product]
             })
-            // return res.json(response[0].customer)
-            // return res.json(response[0].product.name)
-            return res.json(response)
+            res.render("./payment/index.ejs", { payments })
         } catch (err) {
-            return res.json({ message: err })
+            res.json({ message: err })
         }
     }
 

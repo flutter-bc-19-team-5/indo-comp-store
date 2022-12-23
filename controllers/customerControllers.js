@@ -1,34 +1,62 @@
-const { customer } = require('../models')
+const { customer, product, PageState } = require('../models')
 
 class CustomerController {
     //EJS Page
     static async getData(req, res) {
         try {
-            let response = await customer.findAll()
-            return res.json(response)
+            let customers = await customer.findAll({
+                include: product
+            })
+            res.render("./customer/index.ejs", { customers })
         } catch (err) {
-            return res.json({ message: err })
+            res.json({ message: err })
         }
     }
+    static addCustomerPage = (req, res) => res.render('./customer/add.ejs', new PageState())
 
-    static addCustomerPage = (req, res) => res.render('')
-    static editCustomerPage = (req, res) => res.render('')
-
+    static editCustomerPage = async (req, res) => {
+        const { id } = req.params
+        try {
+            const response = await customer.findByPk(id)
+            res.render('./customer/edit.ejs', new PageState(response))
+        } catch (error) {
+            res.render('./customer/edit.ejs', new PageState(null, error.message))
+        }
+    }
+    static infoCustomerPage = async (req, res) => {
+        const { id } = req.params
+        try {
+            const response = await customer.findByPk(id, {
+                include: product
+            })
+            res.render('./customer/info.ejs', new PageState(response))
+        } catch (error) {
+            res.render('./customer/info.ejs', new PageState(null, error))
+        }
+    }
     //CRUD
     static async addCustomer(req, res) {
         try {
             const { name, address, phone } = req.body
-            let response = await customer.create({
-                name: name,
-                address: address,
-                phone: phone,
-            })
-            response
+            /*
+                let response = await customer.create({
+                    name: name,
+                    address: address,
+                    phone: phone,
+                })
+            */
+           const response = await new Promise((resolve, reject) => {
+            setTimeout(() => {
+                reject(true)
+            }, 1000);
+           })
+            let data = response
                 ? res.json({ message: "new Customer has been added" })
                 : res.json({ message: response })
-            // return res.json(response)
+
+            res.redirect("./customer", data)
         } catch (err) {
-            return res.json({ message: err })
+            res.render("./customer/add.ejs", new PageState(req.body, err))
         }
     }
 
@@ -46,11 +74,22 @@ class CustomerController {
         try {
             const id = +req.params.customerId
             const { name, address, phone } = req.body
-            let response = await customer.update({ name, address, phone },
-                { where: { id: id } })
-            return res.json({ message: `Customer ${id} has been updated` })
+            // let response = await customer.update({ name, address, phone },
+            //     { where: { id: id } })
+
+           const response = await new Promise((resolve, reject) => {
+            setTimeout(() => {
+                reject(true)
+            }, 1000);
+           })
+
+           let data = response
+            ? res.json({ message: `Customer ${id} has been updated` })
+            : res.json({ message: response })
+            
+            res.redirect("./customer", data)
         } catch (err) {
-            return res.json({ message: err })
+            res.render("./customer/add.ejs", new PageState(req.body, err))
         }
     }
 

@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+  <meta http-equiv="x-ua-compatible" content="ie=edge" />
+  <title>Customer</title>
+
+  <%- include("../component/lib/header.ejs") %>
+</head>
+
+<body>
+  <!--Main Navigation-->
+  <%- include("../component/navigation.ejs", { select: "customer" }) %>
+    <!--Main Navigation-->
+
+    <!--Main layout-->
+    <main style="margin-top: 58px">
+      <div class="container pt-4">
+        <!--Section: Customers-->
+        <section class="mb-4">
+          <div class="card">
+            <div class="card-header text-center py-3">
+              <h5 class="mb-0 text-center">
+                <strong>Customers</strong>
+              </h5>
+            </div>
+            <div class="card-body">
+              <div class="table-responsive">
+                <table class="table table-hover text-nowrap">
+                  <thead>
+                    <tr>
+                      <th scope="col"></th>
+                      <th scope="col">Customer name</th>
+                      <th scope="col">Address</th>
+                      <th scope="col">Phone</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <% customers.forEach((customer, i)=> { %>
+                      <tr>
+                        <th scope="row">
+                          <%= i +1 %>
+                        </th>
+                        <td><a href="./customer/infoPage/<%= customer.id %>"><%= customer.name %></a></td>
+                        <td>
+                          <%= customer.address %>
+                        </td>
+                        <td>
+                          <%= customer.phone %>
+                        </td>
+                      </tr>
+                    <% }) %>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </section>
+        <!--Section: Customers-->
+      </div>
+    </main>
+    <!--Main layout-->
+    <%- include("../component/lib/footer.ejs") %>
+</body>
+
+</html>

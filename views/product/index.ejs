@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+  <meta http-equiv="x-ua-compatible" content="ie=edge" />
+  <title>Product</title>
+
+  <%- include("../component/lib/header.ejs") %>
+</head>
+
+<body>
+  <!--Main Navigation-->
+  <%- include("../component/navigation.ejs", { select: "product" }) %>
+    <!--Main Navigation-->
+
+    <!--Main layout-->
+    <main style="margin-top: 58px">
+      <div class="container pt-4">
+        <!--Section: Products-->
+        <section class="mb-4">
+          <div class="card">
+            <div class="card-header text-center py-3">
+              <h5 class="mb-0 text-center">
+                <strong>Products</strong>
+              </h5>
+            </div>
+            <div class="card-body">
+              <div class="table-responsive">
+                <table class="table table-hover text-nowrap">
+                  <thead>
+                    <tr>
+                      <th scope="col"></th>
+                      <th scope="col">Product name</th>
+                      <th scope="col">Product type</th>
+                      <th scope="col">Brand</th>
+                      <th scope="col">Price</th>
+                      <th scope="col">Stock</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <% products.forEach((product, i)=> { %>
+                      <tr>
+                        <th scope="row">
+                          <%= i +1 %>
+                        </th>
+                        <td>
+                          <%= product.name %>
+                        </td>
+                        <td>
+                          <%= product.type %>
+                        </td>
+                        <td>
+                          <%= product.brand %>
+                        </td>
+                        <td>
+                          <%= product.price %>
+                        </td>
+                        <td>
+                          <%= product.stock %>
+                        </td>
+                      </tr>
+                      <% }) %>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </section>
+        <!--Section: Products-->
+      </div>
+    </main>
+    <!--Main layout-->
+    <%- include("../component/lib/footer.ejs") %>
+</body>
+
+</html>

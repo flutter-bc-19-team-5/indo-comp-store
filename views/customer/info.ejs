@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+  <meta http-equiv="x-ua-compatible" content="ie=edge" />
+  <title>Dashboard</title>
+
+  <%- include("../component/lib/header.ejs") %>
+</head>
+
+<body>
+  <!--Main Navigation-->
+  <%- include("../component/navigation.ejs", { select: "customer" }) %>
+    <!--Main Navigation-->
+
+    <!--Main layout-->
+    <main style="margin-top: 58px">
+      <div class="container pt-4">
+        <!--Section: Info Customer-->
+        <section class="mb-4">
+          <div class="card">
+            <div class="card-header text-center py-3">
+              <h5 class="mb-0 text-center">
+                <strong>Info Customer</strong>
+              </h5>
+            </div>
+            <div class="card-body">
+              <div class="row justify-content-center">
+                <div class="col-md-4">
+                    <div class="card">
+                        <div class="card-body">
+                          <h5 class="card-title"><%= fields.name %></h5>
+                          <h6 class="card-subtitle mb-2 text-muted"><%= fields.phone %></h6>
+                          <p class="card-text"><%= fields.address %></p>
+                          <a href="../editPage/<%= fields.id %>" class="card-link text-warning">Edit customer</a>
+                          <a href="#" class="card-link text-danger">Delete customer</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-8">
+                    <ol class="list-group list-group-numbered">
+                        <% fields.products.forEach(product => { %>
+                            <li class="list-group-item d-flex justify-content-between align-items-start">
+                                <div class="ms-2 me-auto">
+                                  <div class="fw-bold"><%= product.name %></div>
+                                  <%= product.type %>
+                                </div>
+                                <span class="badge bg-primary rounded-pill">IDR <%= product.price %></span>
+                              </li>
+                        <% }) %>
+                    </ol>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+        <!--Section: Info Customer-->
+      </div>
+    </main>
+    <!--Main layout-->
+    <%- include("../component/lib/footer.ejs") %>
+</body>
+
+</html>
