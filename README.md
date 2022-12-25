@@ -35,6 +35,7 @@ C. Tabel **Product** yang memiliki kolom-kolom berikut :
 | brand | STRING   | NOT NULL    |
 | price | INT      | NOT NULL    |
 | stock | INT      | NOT NULL    |
+| image | STRING   | NOT NULL    |
 
 ### Usage
 
