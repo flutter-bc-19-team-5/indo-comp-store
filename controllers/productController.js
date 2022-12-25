@@ -1,4 +1,5 @@
 const { product, customer, PageState } = require('../models')
+const fs = require('fs')
 
 class ProductController {
     //EJS Page
@@ -12,7 +13,7 @@ class ProductController {
     }
 
     static addProductPage = (req, res) => res.render('./product/add.ejs', new PageState())
-    
+
     static editProductPage = async (req, res) => {
         const { id } = req.params
         try {
@@ -42,13 +43,18 @@ class ProductController {
     static async addProduct(req, res) {
         try {
             const { name, type, brand, price, stock } = req.body
+            //Upload Image
+            const imageName = req.file.filename
+
             let response = await product.create({
                 name: name,
                 type: type,
                 brand: brand,
                 price: price,
-                stock: stock
+                stock: stock,
+                image: imageName
             })
+
             res.redirect("../../product")
         } catch (err) {
             res.render("./product/edit.ejs", new PageState(req.body, err))
@@ -58,7 +64,15 @@ class ProductController {
     static async deleteProduct(req, res) {
         try {
             const id = +req.params.productId
-            let response = await product.destroy({ where: { id: id } })
+            
+            //Delete file in folder public/productImage
+            let response = await product.findByPk(id)
+            const path = `./public/productImage/${response.image}`
+            fs.unlink(path, (err) => {
+                if (err) console.error(err)
+            })
+
+            response = await product.destroy({ where: { id: id } })
             res.redirect("../../product")
         } catch (err) {
             res.render("./product/edit.ejs", new PageState(null, err))
@@ -69,7 +83,17 @@ class ProductController {
         try {
             const id = +req.params.productId
             const { name, type, brand, price, stock } = req.body
-            let response = await product.update({ name, type, brand, price, stock },
+
+            //Check if image will be changed or not
+            let updatingField = {}
+            if (req.file === undefined) {
+                updatingField = { name, type, brand, price, stock }
+            } else {
+                const image = req.file.filename
+                updatingField = { name, type, brand, price, stock, image }
+            }
+
+            let response = await product.update(updatingField,
                 { where: { id: id } })
             res.redirect("../../product")
         } catch (err) {
