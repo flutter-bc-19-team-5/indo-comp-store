@@ -11,9 +11,9 @@ class CustomerController {
         } catch (err) {
             state.error = err
         }
-        res.render("customer/index.ejs", state)
+        res.render('customer/index', state)
     }
-    static addCustomerPage = (req, res) => res.render('customer/add.ejs', new PageState())
+    static addCustomerPage = (req, res) => res.render('customer/add', new PageState())
 
     static editCustomerPage = async (req, res) => {
         const state = new PageState()
@@ -24,7 +24,7 @@ class CustomerController {
         } catch (error) {
             state.error = error
         }
-        res.render('customer/edit.ejs', state)
+        res.render('customer/edit', state)
     }
     static infoCustomerPage = async (req, res) => {
         const { id } = req.params
@@ -38,7 +38,7 @@ class CustomerController {
         } catch (error) {
             state.error = error
         }
-        res.render('customer/info.ejs', state)
+        res.render('customer/info', state)
     }
     //CRUD
     static async addCustomer(req, res) {
@@ -55,7 +55,7 @@ class CustomerController {
 
             res.redirect("../../customer")
         } catch (err) {
-            res.render("customer/add.ejs", new PageState(req.body, err))
+            res.render('customer/add', new PageState(req.body, err))
         }
     }
     static async deleteCustomer(req, res) {
@@ -71,7 +71,7 @@ class CustomerController {
         } catch (err) {
             state.fields = req.body
             state.error = err
-            res.render("customer/info.ejs", state)
+            res.render('customer/info', state)
         }
     }
 
@@ -88,7 +88,7 @@ class CustomerController {
             
             res.redirect("../../customer")
         } catch (err) {
-            res.render("customer/edit.ejs", new PageState(req.body, err))
+            res.render('customer/edit', new PageState(req.body, err))
         }
     }
 

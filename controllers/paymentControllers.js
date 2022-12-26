@@ -11,7 +11,7 @@ class PaymentController {
         } catch (err) {
             state.error = err
         }
-        res.render("payment/index.ejs", state)
+        res.render('payment/index', state)
     }
 
     static addPaymentPage = async (req, res) => {
@@ -24,15 +24,15 @@ class PaymentController {
         } catch (error) {
             state.error = error.message
         }
-        res.render('payment/add.ejs', state)
+        res.render('payment/add', state)
     }
     static editPaymentPage = async (req, res) => {
         const { id } = req.params
         try {
             const response = await payment.findByPk(id)
-            res.render('payment/edit.ejs', new PageState(response))
+            res.render('payment/edit', new PageState(response))
         } catch (error) {
-            res.render('payment/edit.ejs', new PageState(null, error))
+            res.render('payment/edit', new PageState(null, error))
         }
     }
 
@@ -42,9 +42,9 @@ class PaymentController {
             const response = await payment.findByPk(id, {
                 include: [product, customer]
             })
-            res.render('payment/info.ejs', new PageState(response))
+            res.render('payment/info', new PageState(response))
         } catch (error) {
-            res.render('payment/info.ejs', new PageState(null, error))
+            res.render('payment/info', new PageState(null, error))
         }
     }
     //CRUD
@@ -71,11 +71,11 @@ class PaymentController {
                 data.fields.products = await product.findAll()
                 data.error = { message: "there is no stock left" }
 
-                res.render('payment/add.ejs', data)
+                res.render('payment/add', data)
             }
         } catch (err) {
             data.error = err
-            res.render('payment/add.ejs', data)
+            res.render('payment/add', data)
         }
     }
 

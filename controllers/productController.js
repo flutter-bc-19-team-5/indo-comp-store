@@ -10,18 +10,18 @@ class ProductController {
         } catch (err) {
             state.error = err
         }
-        res.render("product/index.ejs", state)
+        res.render('product/index', state)
     }
 
-    static addProductPage = (req, res) => res.render('product/add.ejs', new PageState())
+    static addProductPage = (req, res) => res.render('product/add', new PageState())
 
     static editProductPage = async (req, res) => {
         const { id } = req.params
         try {
             const response = await product.findByPk(id)
-            res.render('product/edit.ejs', new PageState(response))
+            res.render('product/edit', new PageState(response))
         } catch (error) {
-            res.render('product/edit.ejs', new PageState(null, error))
+            res.render('product/edit', new PageState(null, error))
         }
     }
     static infoProductPage = async (req, res) => {
@@ -36,7 +36,7 @@ class ProductController {
         } catch (error) {
             state.error = error
         }
-        res.render('product/info.ejs', state)
+        res.render('product/info', state)
     }
     //CRUD
     static async addProduct(req, res) {
@@ -56,7 +56,7 @@ class ProductController {
 
             res.redirect("../../product")
         } catch (err) {
-            res.render("product/edit.ejs", new PageState(req.body, err))
+            res.render('product/edit', new PageState(req.body, err))
         }
     }
 
@@ -74,7 +74,7 @@ class ProductController {
             response = await product.destroy({ where: { id: id } })
             res.redirect("../../product")
         } catch (err) {
-            res.render("product/edit.ejs", new PageState(null, err))
+            res.render('product/edit', new PageState(null, err))
         }
     }
 
@@ -96,7 +96,7 @@ class ProductController {
                 { where: { id: id } })
             res.redirect("../../product")
         } catch (err) {
-            res.render("product/edit.ejs", new PageState(req.body, err))
+            res.render('product/edit', new PageState(req.body, err))
         }
     }
 
