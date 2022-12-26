@@ -11,7 +11,7 @@ class PaymentController {
         } catch (err) {
             state.error = err
         }
-        res.render('payment/index', state)
+        res.render("./payment/index", state)
     }
 
     static addPaymentPage = async (req, res) => {
@@ -24,7 +24,7 @@ class PaymentController {
         } catch (error) {
             state.error = error.message
         }
-        res.render('payment/add', state)
+        res.render("./payment/add.ejs", state)
     }
     static editPaymentPage = async (req, res) => {
         const { id } = req.params
