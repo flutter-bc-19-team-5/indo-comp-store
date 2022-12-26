@@ -1,11 +1,17 @@
-const { product, customer, PageState } = require('../models')
+const { product, customer, PageState, Sequelize } = require('../models')
 const fs = require('fs')
 
 class ProductController {
     //EJS Page
     static async getData(req, res) {
         try {
-            let products = await product.findAll()
+            const searchName = req.query.productName
+            const operand = Sequelize.Op
+            let products = null
+
+            if (searchName === undefined) products = await product.findAll()
+            else products = await product.findAll({ where: { name: { [operand.like]: `${searchName}%` } } })
+
             res.render("./product/index.ejs", { products })
         } catch (err) {
             res.json({ message: err })
@@ -64,7 +70,7 @@ class ProductController {
     static async deleteProduct(req, res) {
         try {
             const id = +req.params.productId
-            
+
             //Delete file in folder public/productImage
             let response = await product.findByPk(id)
             const path = `./public/productImage/${response.image}`
