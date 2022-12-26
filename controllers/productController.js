@@ -6,7 +6,17 @@ class ProductController {
     static async getData(req, res) {
         const state = new PageState()
         try {
-            state.products = await product.findAll()
+            const searchName = req.query.customerName
+            const operand = Sequelize.Op
+
+            if (searchName === undefined) 
+                state.customers = await product.findAll()
+            else state.customers = await product.findAll({ 
+                include: customer, 
+                where: { 
+                    name: { [operand.like]: `%${searchName}%` }
+                }
+            })
         } catch (err) {
             state.error = err
         }

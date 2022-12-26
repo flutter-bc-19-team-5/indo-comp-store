@@ -1,12 +1,20 @@
-const { customer, product, PageState } = require('../models')
+const { customer, product, PageState, Sequelize } = require('../models')
 
 class CustomerController {
     //EJS Page
     static async getData(req, res) {
         const state = new PageState()
         try {
-            state.customers = await customer.findAll({
-                include: product
+            const searchName = req.query.customerName
+            const operand = Sequelize.Op
+
+            if (searchName === undefined) 
+                state.customers = await customer.findAll({ include: product })
+            else state.customers = await customer.findAll({ 
+                include: product, 
+                where: { 
+                    name: { [operand.like]: `%${searchName}%` }
+                }
             })
         } catch (err) {
             state.error = err
