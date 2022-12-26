@@ -45,6 +45,8 @@
                     </div>
                   </div><br />
                   <div class="list-group">
+                    <h3>The <%= fields.name %> customer <%= fields.customers.length ? "\'s" : "" %></h3> <hr />
+                    <b><%= !fields.customers.length ? "Has no transaction yet." : "" %></b>
                     <% fields.customers.forEach((customer, i) => { %>
                       <a href="#" class="list-group-item list-group-item-action <%= i < 1 && 'active' %>" aria-current="true">
                         <div class="d-flex w-100 justify-content-between">

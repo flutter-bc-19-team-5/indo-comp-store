@@ -2,7 +2,7 @@
 
 ### Table product
 ```bash
-npx sequelize-cli model:generate --name product --attributes "name:string, type:string, brand:string, price:integer, stock:integer"
+npx sequelize-cli model:generate --name product --attributes "name:string, type:string, brand:string, price:integer, stock:integer, image:string"
 ```
 
 ### Table customers

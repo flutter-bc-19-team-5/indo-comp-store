@@ -3,13 +3,15 @@ const { customer, product, PageState } = require('../models')
 class CustomerController {
     //EJS Page
     static async getData(req, res) {
+        const state = new PageState()
         try {
-            let customers = await customer.findAll({
+            state.customers = await customer.findAll({
                 include: product
             })
-            res.render("./customer/index.ejs", { customers })
+            res.render("./customer/index.ejs", state)
         } catch (err) {
-            res.json({ message: err })
+            state.error = err
+            res.render("./customer/index.ejs", state)
         }
     }
     static addCustomerPage = (req, res) => res.render('./customer/add.ejs', new PageState())

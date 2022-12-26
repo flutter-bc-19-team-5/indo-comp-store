@@ -4,11 +4,13 @@ const fs = require('fs')
 class ProductController {
     //EJS Page
     static async getData(req, res) {
+        const state = new PageState()
         try {
-            let products = await product.findAll()
-            res.render("./product/index.ejs", { products })
+            state.products = await product.findAll()
+            res.render("./product/index.ejs", state)
         } catch (err) {
-            res.json({ message: err })
+            state.error = err
+            res.render("./product/index.ejs", state)
         }
     }
 

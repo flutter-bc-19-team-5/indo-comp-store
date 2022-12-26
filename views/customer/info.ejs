@@ -41,13 +41,15 @@
                         </div>
                     </div>
                 </div>
-                <div class="col-md-8">
+                <div class="col-md-8 text-center">
+                  <b><%= !fields.products.length ? "Has no transaction yet." : "" %></b>
+                  
                     <ol class="list-group list-group-numbered">
                         <% fields?.products.forEach(product => { %>
                             <li class="list-group-item d-flex justify-content-between align-items-start">
                                 <div class="ms-2 me-auto">
                                   <div class="fw-bold"><%= product.name %></div>
-                                  <%= product.type %>
+                                  <i class="fas fa-money-bill-wave fa-fw"></i> <%= product.type %>
                                 </div>
                                 <span class="badge bg-primary rounded-pill">IDR <%= product.price %></span>
                               </li>

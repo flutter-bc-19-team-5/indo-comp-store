@@ -1,5 +1,8 @@
 class PageState {
     constructor(fields, error, message){
+        this.products = []
+        this.customers = []
+        this.payments = []
         this.fields = fields
         this.error = error
     }
