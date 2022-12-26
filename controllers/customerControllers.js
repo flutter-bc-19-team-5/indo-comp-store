@@ -8,13 +8,12 @@ class CustomerController {
             state.customers = await customer.findAll({
                 include: product
             })
-            res.render("./customer/index.ejs", state)
         } catch (err) {
             state.error = err
-            res.render("./customer/index.ejs", state)
         }
+        res.render("customer/index.ejs", state)
     }
-    static addCustomerPage = (req, res) => res.render('./customer/add.ejs', new PageState())
+    static addCustomerPage = (req, res) => res.render('customer/add.ejs', new PageState())
 
     static editCustomerPage = async (req, res) => {
         const state = new PageState()
@@ -22,11 +21,10 @@ class CustomerController {
         try {
             const response = await customer.findByPk(id)
             state.fields = response
-            res.render('./customer/edit.ejs', state)
         } catch (error) {
             state.error = error
-            res.render('./customer/edit.ejs', state)
         }
+        res.render('customer/edit.ejs', state)
     }
     static infoCustomerPage = async (req, res) => {
         const { id } = req.params
@@ -37,12 +35,10 @@ class CustomerController {
             })
             if (response) state.fields = response
             else state.error = { message: "Not found" }
-            
-            res.render('./customer/info.ejs', state)
         } catch (error) {
             state.error = error
-            res.render('./customer/info.ejs', state)
         }
+        res.render('customer/info.ejs', state)
     }
     //CRUD
     static async addCustomer(req, res) {
@@ -59,7 +55,7 @@ class CustomerController {
 
             res.redirect("../../customer")
         } catch (err) {
-            res.render("./customer/add.ejs", new PageState(req.body, err))
+            res.render("customer/add.ejs", new PageState(req.body, err))
         }
     }
     static async deleteCustomer(req, res) {
@@ -75,7 +71,7 @@ class CustomerController {
         } catch (err) {
             state.fields = req.body
             state.error = err
-            res.render("./customer/info.ejs", state)
+            res.render("customer/info.ejs", state)
         }
     }
 
@@ -92,7 +88,7 @@ class CustomerController {
             
             res.redirect("../../customer")
         } catch (err) {
-            res.render("./customer/edit.ejs", new PageState(req.body, err))
+            res.render("customer/edit.ejs", new PageState(req.body, err))
         }
     }
 

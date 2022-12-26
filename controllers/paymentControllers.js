@@ -8,33 +8,31 @@ class PaymentController {
             state.payments = await payment.findAll({
                 include: [product, customer]
             })
-            res.render("./payment/index.ejs", state)
         } catch (err) {
             state.error = err
-            res.render("./payment/index.ejs", state)
         }
+        res.render("payment/index.ejs", state)
     }
 
     static addPaymentPage = async (req, res) => {
-        let data = new PageState()
+        let state = new PageState()
         try {
-            data.setFields({})
-            data.fields.customers = await customer.findAll()
-            data.fields.products = await product.findAll()
+            state.setFields({})
+            state.fields.customers = await customer.findAll()
+            state.fields.products = await product.findAll()
 
-            res.render('./payment/add.ejs', data)
         } catch (error) {
-            data.error = error.message
-            res.render('./payment/add.ejs', data)
+            state.error = error.message
         }
+        res.render('payment/add.ejs', state)
     }
     static editPaymentPage = async (req, res) => {
         const { id } = req.params
         try {
             const response = await payment.findByPk(id)
-            res.render('./payment/edit.ejs', new PageState(response))
+            res.render('payment/edit.ejs', new PageState(response))
         } catch (error) {
-            res.render('./payment/edit.ejs', new PageState(null, error))
+            res.render('payment/edit.ejs', new PageState(null, error))
         }
     }
 
@@ -44,9 +42,9 @@ class PaymentController {
             const response = await payment.findByPk(id, {
                 include: [product, customer]
             })
-            res.render('./payment/info.ejs', new PageState(response))
+            res.render('payment/info.ejs', new PageState(response))
         } catch (error) {
-            res.render('./payment/info.ejs', new PageState(null, error))
+            res.render('payment/info.ejs', new PageState(null, error))
         }
     }
     //CRUD
@@ -73,11 +71,11 @@ class PaymentController {
                 data.fields.products = await product.findAll()
                 data.error = { message: "there is no stock left" }
 
-                res.render('./payment/add.ejs', data)
+                res.render('payment/add.ejs', data)
             }
         } catch (err) {
             data.error = err
-            res.render('./payment/add.ejs', data)
+            res.render('payment/add.ejs', data)
         }
     }
 

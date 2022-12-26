@@ -1,14 +1,14 @@
-const express = require("express")
-const dotenv = require("dotenv")
+require("dotenv").config({path: __dirname + '/.env'})
 
+const express = require("express")
 const app = express()
-dotenv.config()
 
 const port = process.env.PORT || 3000
 
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
 app.use(express.static(__dirname + "/public"))
+app.set('view engine', 'ejs');
 
 const routes = require('./routes')
 app.use(routes)
