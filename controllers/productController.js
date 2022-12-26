@@ -1,4 +1,4 @@
-const { product, customer, PageState } = require('../models')
+const { product, customer, PageState, Sequelize } = require('../models')
 const fs = require('fs')
 
 class ProductController {
@@ -10,9 +10,8 @@ class ProductController {
             const operand = Sequelize.Op
 
             if (searchName === undefined) 
-                state.customers = await product.findAll()
-            else state.customers = await product.findAll({ 
-                include: customer, 
+                state.products = await product.findAll()
+            else state.products = await product.findAll({
                 where: { 
                     name: { [operand.like]: `%${searchName}%` }
                 }
