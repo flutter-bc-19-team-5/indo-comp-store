@@ -2,7 +2,7 @@
   "development": {
     "username": "postgres",
     "password": "master",
-    "database": "indoCompStore_db",
+    "database": "db_indoComp_Store",
     "host": "127.0.0.1",
     "dialect": "postgres"
   },
