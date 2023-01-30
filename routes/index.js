@@ -4,12 +4,12 @@ route.get('/', (req, res) => {
     res.redirect("payment") // res.render('./index.ejs')
 })
 
-const customerRoutes = require('./customerRoutes.js')
 const productRoutes = require('./productRoutes.js')
+const customerRoutes = require('./customerRoutes.js')
 const paymentRoutes = require('./paymentRoutes.js')
 
-route.use('/customer', customerRoutes)
-route.use('/product', productRoutes)
-route.use('/payment', paymentRoutes)
+route.use('/products', productRoutes)
+route.use('/customers', customerRoutes)
+route.use('/payments', paymentRoutes)
 
 module.exports = route

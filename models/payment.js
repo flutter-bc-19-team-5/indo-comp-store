@@ -11,6 +11,7 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       // define association here
+      payment.hasOne(models.transaction)
     }
   }
   payment.init({

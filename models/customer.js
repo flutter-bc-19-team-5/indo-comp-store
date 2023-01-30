@@ -1,4 +1,6 @@
 'use strict';
+const { encrypt } = require("../helpers/bcrypt")
+
 const {
   Model
 } = require('sequelize');
@@ -11,16 +13,40 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       // define association here
+      customer.hasMany(models.transaction)
     }
   }
   customer.init({
-    name: DataTypes.STRING,
+    name: {
+      type: DataTypes.STRING,
+      allowNull: false
+    },
     address: DataTypes.STRING,
-    phone: DataTypes.INTEGER,
-    email: DataTypes.STRING,
-    password: DataTypes.STRING,
-    profilImage: DataTypes.STRING
+    phone: {
+      type: DataTypes.STRING,
+      validate: {
+        isAlphanumeric: true
+      }
+    },
+    email: {
+      type: DataTypes.STRING,
+      allowNull: false
+    },
+    password: {
+      type: DataTypes.STRING,
+      allowNull: false
+    },
+    profileImage: {
+      type: DataTypes.STRING,
+    }
   }, {
+    hooks: {
+      beforeCreate: function (customer) {
+        customer.password = encrypt(customer.password)
+        if (customer.profileImage === null)
+          customer.profileImage = "https://via.placeholder.com/150"
+      }
+    },
     sequelize,
     modelName: 'customer',
   });

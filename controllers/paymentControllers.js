@@ -3,20 +3,15 @@ const { customer, payment, product, PageState } = require('../models')
 class PaymentController {
     //EJS Page
     static async getData(req, res) {
-        const state = new PageState({})
         try {
-            state.payments = await payment.findAll({
-                include: [product, customer]
-            })
-            res.render("./payment/index.ejs", state)
+            let payments = await payment.findAll()
+            res.json(payments)
         } catch (err) {
-            state.error = err
-            res.render("./payment/index.ejs", state)
+            res.json({message: err})
         }
     }
 
     static addPaymentPage = async (req, res) => {
-        let data = new PageState()
         try {
             data.setFields({})
             data.fields.customers = await customer.findAll()

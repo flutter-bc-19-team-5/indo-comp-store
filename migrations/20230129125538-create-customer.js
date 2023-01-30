@@ -16,7 +16,7 @@ module.exports = {
         type: Sequelize.STRING
       },
       phone: {
-        type: Sequelize.INTEGER
+        type: Sequelize.STRING
       },
       email: {
         type: Sequelize.STRING
@@ -24,7 +24,7 @@ module.exports = {
       password: {
         type: Sequelize.STRING
       },
-      profilImage: {
+      profileImage: {
         type: Sequelize.STRING
       },
       createdAt: {

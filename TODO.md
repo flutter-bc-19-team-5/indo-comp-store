@@ -7,7 +7,7 @@ npx sequelize-cli model:generate --name product --attributes "name:string, type:
 
 ### Table customers
 ```bash
-npx sequelize-cli model:generate --name customer --attributes "name:string, address:string, phone:integer, email:string, password:string, profilImage:string"
+npx sequelize-cli model:generate --name customer --attributes "name:string, address:string, phone:string, email:string, password:string, profileImage:string"
 ```
 
 ### Table transactions

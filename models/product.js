@@ -11,9 +11,7 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       // define association here
-      product.belongsToMany(models.customer, { 
-        through: models.payment 
-      })
+      product.hasMany(models.transaction)
     }
   }
   product.init({
@@ -24,6 +22,12 @@ module.exports = (sequelize, DataTypes) => {
     stock: DataTypes.INTEGER,
     image: DataTypes.STRING
   }, {
+    hooks: {
+      beforeCreate: function (product) {
+        if (product.image === undefined)
+          product.image = "https://via.placeholder.com/150"
+      }
+    },
     sequelize,
     modelName: 'product',
   });

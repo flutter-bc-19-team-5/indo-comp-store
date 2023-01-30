@@ -1,101 +1,119 @@
-const { customer, product, PageState, Sequelize } = require('../models')
+const { customer, Sequelize } = require('../models')
+const { decrypt } = require("../helpers/bcrypt")
+const { generateToken } = require("../helpers/jsonwebtoken")
+
+const fs = require('fs')
 
 class CustomerController {
-    //EJS Page
     static async getData(req, res) {
         try {
             const searchName = req.query.customerName
             const operand = Sequelize.Op
             let customers = null
 
-            if (searchName === undefined) customers = await customer.findAll()
-            else customers = await customer.findAll({ where: { name: { [operand.like]: `${searchName}%` } } })
+            if (searchName === undefined) customers = await customer.findAll({ order: [['name', 'ASC']] })
+            else customers = await customer.findAll({ where: { name: { [operand.like]: `%${searchName}%` } } })
 
-            res.render("./customer/index.ejs", { customers })
+            res.json(customers)
         } catch (err) {
             res.json({ message: err })
         }
     }
 
-    static addCustomerPage = (req, res) => res.render('./customer/add.ejs', new PageState())
-
-    static editCustomerPage = async (req, res) => {
-        const state = new PageState()
-        const { id } = req.params
+    static infoCustomer = async (req, res) => {
+        const id = +req.params.customerId
         try {
-            const response = await customer.findByPk(id)
-            state.fields = response
-            res.render('./customer/edit.ejs', state)
-        } catch (error) {
-            state.error = error
-            res.render('./customer/edit.ejs', state)
+            let response = await customer.findByPk(id)
+            res.json(response)
+        } catch (err) {
+            res.json({ message: err })
         }
     }
-    static infoCustomerPage = async (req, res) => {
-        const { id } = req.params
-        const state = new PageState({})
-        try {
-            const response = await customer.findByPk(id, {
-                include: product
-            })
-            if (response) state.fields = response
-            else state.error = { message: "Not found" }
 
-            res.render('./customer/info.ejs', state)
-        } catch (error) {
-            state.error = error
-            res.render('./customer/info.ejs', state)
-        }
-    }
-    //CRUD
     static async addCustomer(req, res) {
         try {
-            const { name, address, phone } = req.body
-            let response = await customer.create({
-                name: name,
-                address: address,
-                phone: phone,
-            })
-            /*let data = response
-                ? res.json({ message: "new Customer has been added" })
-                : res.json({ message: response })*/
+            const { name, address, phone, email, password } = req.body
+            const profileImage = req.file.filename
 
-            res.redirect("../../customer")
+            // let profileImage = ''
+            // if (req.file === undefined) profileImage = null
+            // else profileImage = req.file.filename
+
+            let response = await customer.create({ name, address, phone, email, password, profileImage })
+            res.json(response)
+
         } catch (err) {
-            res.render("./customer/add.ejs", new PageState(req.body, err))
+            res.json({ message: err })
         }
     }
+
     static async deleteCustomer(req, res) {
-        const state = new PageState({})
         try {
             const id = +req.params.customerId
-            await customer.destroy({ where: { id: id } })
-            /*let message = response === 1 
-                ? "Customer has been deleted" 
-                : `Couldn\'t delete customer id ${id}`*/
-            res.redirect("../../customer")
 
+            //Delete file in folder public/profileImage
+            let data = await customer.findByPk(id)
+            const path = `./public/profileImage/${data.profileImage}`
+            fs.unlink(path, (err) => {
+                if (err) console.error(err)
+            })
+
+            let response = await customer.destroy({ where: { id: id } })
+            res.json(response)
         } catch (err) {
-            state.fields = req.body
-            state.error = err
-            res.render("./customer/info.ejs", state)
+            res.json({ message: err })
         }
     }
 
     static async updateCustomer(req, res) {
         try {
             const id = +req.params.customerId
-            const { name, address, phone } = req.body
-            let response = await customer.update({ name, address, phone },
-                { where: { id: id } })
+            const { name, address, phone, email, password } = req.body
 
-            /*let data = response
-             ? res.json({ message: `Customer ${id} has been updated` })
-             : res.json({ message: response })*/
+            let data = await customer.findByPk(id)
 
-            res.redirect("../../customer")
+            let profileImage = data.profileImage
+            if (req.file !== undefined) profileImage = req.file.filename
+
+            let response = await customer.update(
+                { name, address, phone, email, password, profileImage },
+                { where: { id: id } }
+            )
+
+            // let response = ''
+            // if (req.file === undefined) {
+            //     response = await customer.update({ name, address, phone, email, password },
+            //         { where: { id: id } })
+            // } else {
+            //     const profileImage = req.file.filename
+            //     response = await customer.update({ name, address, phone, email, password, profileImage },
+            //         { where: { id: id } })
+            // }
+
+            res.json(response)
         } catch (err) {
-            res.render("./customer/edit.ejs", new PageState(req.body, err))
+            res.json({ message: err })
+        }
+    }
+
+    static async loginCustomer(req, res) {
+        try {
+            const { email, password } = req.body
+            let customerData = await customer.findOne({ where: { email: email } })
+
+            if (customerData) {
+                if (decrypt(password, customer.email)) {
+                    let accessToken = generateToken(customerData)
+                    res.json(accessToken)
+                } else {
+                    res.json({ message: "Incorrect Password" })
+                }
+            } else {
+                res.json({ message: "Member not found" })
+            }
+
+        } catch (err) {
+            res.json({ message: err })
         }
     }
 

@@ -1,69 +1,48 @@
-const { product, customer, PageState, Sequelize } = require('../models')
+const { product, Sequelize } = require('../models')
 const fs = require('fs')
 
 class ProductController {
-    //EJS Page
     static async getData(req, res) {
         try {
-            const searchName = req.query.productName
+            const search = req.params.productName
             const operand = Sequelize.Op
             let products = null
 
-            if (searchName === undefined) products = await product.findAll()
-            else products = await product.findAll({ where: { name: { [operand.like]: `${searchName}%` } } })
+            if (search === undefined) products = await product.findAll({ order: [['name', 'ASC']] })
+            else products = await product.findAll({ where: { name: { [operand.like]: `%${search}%` } } })
 
-            res.render("./product/index.ejs", { products })
+            res.json(products)
         } catch (err) {
             res.json({ message: err })
         }
     }
 
-    static addProductPage = (req, res) => res.render('./product/add.ejs', new PageState())
-
-    static editProductPage = async (req, res) => {
-        const { id } = req.params
+    static async infoProduct(req, res) {
+        const id = +req.params.productId
         try {
-            const response = await product.findByPk(id)
-            res.render('./product/edit.ejs', new PageState(response))
-        } catch (error) {
-            res.render('./product/edit.ejs', new PageState(null, error))
+            let response = await product.findByPk(id)
+            res.json(response)
+        } catch (err) {
+            res.json({ message: err })
         }
     }
-    static infoProductPage = async (req, res) => {
-        const { id } = req.params
-        const state = new PageState({})
-        try {
-            const response = await product.findByPk(id, {
-                include: customer
-            })
-            if (response) state.fields = response
-            else state.error = { message: "Not found" }
 
-            res.render('./product/info.ejs', state)
-        } catch (error) {
-            state.error = error
-            res.render('./product/info.ejs', state)
-        }
-    }
-    //CRUD
     static async addProduct(req, res) {
         try {
             const { name, type, brand, price, stock } = req.body
-            //Upload Image
-            const imageName = req.file.filename
+            let field = {}
 
-            let response = await product.create({
-                name: name,
-                type: type,
-                brand: brand,
-                price: price,
-                stock: stock,
-                image: imageName
-            })
+            if (req.file === undefined) {
+                field = { name, type, brand, price, stock }
+            } else {
+                const image = req.file.filename
+                field = { name, type, brand, price, stock, image }
+            }
 
-            res.redirect("../../product")
+            let response = await product.create(field)
+            res.json(response)
         } catch (err) {
-            res.render("./product/edit.ejs", new PageState(req.body, err))
+            res.json({ message: err })
         }
     }
 
@@ -72,16 +51,18 @@ class ProductController {
             const id = +req.params.productId
 
             //Delete file in folder public/productImage
-            let response = await product.findByPk(id)
-            const path = `./public/productImage/${response.image}`
-            fs.unlink(path, (err) => {
-                if (err) console.error(err)
-            })
+            let data = await product.findByPk(id)
+            if (data.image !== "https://via.placeholder.com/150") {
+                const path = `./public/productImage/${data.image}`
+                fs.unlink(path, (err) => {
+                    if (err) console.error(err)
+                })
+            }
 
-            response = await product.destroy({ where: { id: id } })
-            res.redirect("../../product")
+            let response = await product.destroy({ where: { id: id } })
+            res.json(response)
         } catch (err) {
-            res.render("./product/edit.ejs", new PageState(null, err))
+            res.json({ message: err })
         }
     }
 
@@ -89,21 +70,29 @@ class ProductController {
         try {
             const id = +req.params.productId
             const { name, type, brand, price, stock } = req.body
+            let field = {}
 
             //Check if image will be changed or not
-            let updatingField = {}
             if (req.file === undefined) {
-                updatingField = { name, type, brand, price, stock }
+                field = { name, type, brand, price, stock }
             } else {
+                //Delete file in folder public/productImage
+                let data = await product.findByPk(id)
+                if (data.image !== "https://via.placeholder.com/150") {
+                    const path = `./public/productImage/${data.image}`
+                    fs.unlink(path, (err) => {
+                        if (err) console.error(err)
+                    })
+                }
+
                 const image = req.file.filename
-                updatingField = { name, type, brand, price, stock, image }
+                field = { name, type, brand, price, stock, image }
             }
 
-            let response = await product.update(updatingField,
-                { where: { id: id } })
-            res.redirect("../../product")
+            let response = await product.update(field, { where: { id: id } })
+            res.json(response[0])
         } catch (err) {
-            res.render("./product/edit.ejs", new PageState(req.body, err))
+            res.json({ message: err })
         }
     }
 
