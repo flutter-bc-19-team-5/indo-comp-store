@@ -7,7 +7,7 @@ const fs = require('fs')
 class CustomerController {
     static async getData(req, res) {
         try {
-            const searchName = req.query.customerName
+            const searchName = req.params.customerName
             const operand = Sequelize.Op
             let customers = null
 
@@ -33,15 +33,17 @@ class CustomerController {
     static async addCustomer(req, res) {
         try {
             const { name, address, phone, email, password } = req.body
-            const profileImage = req.file.filename
+            let field = {}
 
-            // let profileImage = ''
-            // if (req.file === undefined) profileImage = null
-            // else profileImage = req.file.filename
+            if (req.file === undefined) {
+                field = { name, address, phone, email, password }
+            } else {
+                const profileImage = req.file.filename
+                field = { name, address, phone, email, password, profileImage }
+            }
 
-            let response = await customer.create({ name, address, phone, email, password, profileImage })
+            let response = await customer.create(field)
             res.json(response)
-
         } catch (err) {
             res.json({ message: err })
         }
@@ -53,10 +55,12 @@ class CustomerController {
 
             //Delete file in folder public/profileImage
             let data = await customer.findByPk(id)
-            const path = `./public/profileImage/${data.profileImage}`
-            fs.unlink(path, (err) => {
-                if (err) console.error(err)
-            })
+            if (data.profileImage !== "https://via.placeholder.com/150") {
+                const path = `./public/profileImage/${data.profileImage}`
+                fs.unlink(path, (err) => {
+                    if (err) console.error(err)
+                })
+            }
 
             let response = await customer.destroy({ where: { id: id } })
             res.json(response)
@@ -69,28 +73,26 @@ class CustomerController {
         try {
             const id = +req.params.customerId
             const { name, address, phone, email, password } = req.body
+            let field = {}
 
-            let data = await customer.findByPk(id)
+            if (req.file === undefined) {
+                field = { name, address, phone, email, password }
+            } else {
+                let data = await customer.findByPk(id)
+                if (data.profileImage !== "https://via.placeholder.com/150") {
+                    const path = `./public/profileImage/${data.profileImage}`
+                    fs.unlink(path, (err) => {
+                        if (err) console.error(err)
+                    })
+                }
 
-            let profileImage = data.profileImage
-            if (req.file !== undefined) profileImage = req.file.filename
+                const profileImage = req.file.filename
+                field = { name, address, phone, email, password, profileImage }
+            }
 
             let response = await customer.update(
-                { name, address, phone, email, password, profileImage },
-                { where: { id: id } }
-            )
-
-            // let response = ''
-            // if (req.file === undefined) {
-            //     response = await customer.update({ name, address, phone, email, password },
-            //         { where: { id: id } })
-            // } else {
-            //     const profileImage = req.file.filename
-            //     response = await customer.update({ name, address, phone, email, password, profileImage },
-            //         { where: { id: id } })
-            // }
-
-            res.json(response)
+                field, { where: { id: id }, individualHooks: true })
+            res.json(response[0])
         } catch (err) {
             res.json({ message: err })
         }
@@ -102,9 +104,9 @@ class CustomerController {
             let customerData = await customer.findOne({ where: { email: email } })
 
             if (customerData) {
-                if (decrypt(password, customer.email)) {
+                if (decrypt(password, customerData.password)) {
                     let accessToken = generateToken(customerData)
-                    res.json(accessToken)
+                    res.json({ accessToken, role: 'user' })
                 } else {
                     res.json({ message: "Incorrect Password" })
                 }

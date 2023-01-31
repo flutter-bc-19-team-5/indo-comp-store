@@ -43,8 +43,13 @@ module.exports = (sequelize, DataTypes) => {
     hooks: {
       beforeCreate: function (customer) {
         customer.password = encrypt(customer.password)
-        if (customer.profileImage === null)
+        if (customer.profileImage === undefined)
           customer.profileImage = "https://via.placeholder.com/150"
+      },
+      beforeUpdate: function (customer, field) {
+        if (field.fields.includes("password")) {
+          customer.password = encrypt(customer.password)
+        }
       }
     },
     sequelize,
