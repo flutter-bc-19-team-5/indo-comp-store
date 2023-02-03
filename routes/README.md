@@ -1,20 +1,31 @@
 ## LIST ROUTING UNTUK OPERASI CRUD
 
-| Method | Route                  | Keterangan                                                   |
-| ------ | ---------------------- | ------------------------------------------------------------ |
-| GET    | /                      | Home Page                                                    |
-| GET    | /customer              | Read data Customer                                           |
-| GET    | /payment               | Read data Payment                                            |
-| GET    | /product               | Read data Product                                            |
-|        |                        |                                                              |
-| POST   | /customer/add          | Create data Customer yang dikirim dari halaman ejs file      |
-| POST   | /payment/add           | Create data Payment  yang dikirim dari halaman ejs file      |
-| POST   | /product/add           | Create data Product  yang dikirim dari halaman ejs file      |
-|        |                        |                                                              |
-| GET    | /customer/delete/:id   | Delete data Customer berdasarkan ***id*** yang dikirimkan    |
-| GET    | /payment/delete/:id    | Delete data Payment  berdasarkan ***id*** yang dikirimkan    |
-| GET    | /product/delete/:id    | Delete data Product  berdasarkan ***id*** yang dikirimkan    |
-|        |                        |                                                              |
-| POST   | /customer/update/:id   | Update data Customer yang dikirim dari halaman ejs file      |
-| POST   | /payment/update/:id    | Update data Payment  yang dikirim dari halaman ejs file      |
-| POST   | /product/update/:id    | Update data Product  yang dikirim dari halaman ejs file      |
+| Method | Route                  | Keterangan                                            |
+| ------ | ---------------------- | ----------------------------------------------------- |
+| GET    | /customers             | Read all data Customer                                |
+| GET    | /payments              | Read all data Payment                                 |
+| GET    | /products              | Read all data Product                                 |
+| GET    | /categories            | Read all data Category                                |
+| GET    | /brands                | Read all data Brand                                   |
+|        |                        |                                                       |
+| GET    | /customers/info/:id    | Read one data Customer                                |
+| GET    | /customers/login       | Login Customer & generate access token                |
+| GET    | /products/info/:id     | Read one data Product                                 |
+|        |                        |                                                       |
+| POST   | /customers/add         | Create data Customer                                  |
+| POST   | /payments/add          | Create data Payment                                   |
+| POST   | /products/add          | Create data Product                                   |
+| POST   | /categories/add        | Create data Category                                  |
+| POST   | /brands/add            | Create data Brand                                     |
+|        |                        |                                                       |
+| DELETE | /customers/delete/:id  | Delete data Customer berdasarkan ***id Primary Key*** |
+| DELETE | /payments/delete/:id   | Delete data Payment  berdasarkan ***id Primary Key*** |
+| DELETE | /products/delete/:id   | Delete data Product  berdasarkan ***id Primary Key*** |
+| DELETE | /categories/delete/:id | Delete data Category berdasarkan ***id Primary Key*** |
+| DELETE | /brands/delete/:id     | Delete data Brand    berdasarkan ***id Primary Key*** |
+|        |                        |                                                       |
+| PUT    | /customers/update/:id  | Update data Customer berdasarkan ***id Primary Key*** |
+| PUT    | /payments/update/:id   | Update data Payment  berdasarkan ***id Primary Key*** |
+| PUT    | /products/update/:id   | Update data Product  berdasarkan ***id Primary Key*** |
+| PUT    | /categories/update/:id | Update data Category berdasarkan ***id Primary Key*** |
+| PUT    | /brands/update/:id     | Update data Brand    berdasarkan ***id Primary Key*** |
