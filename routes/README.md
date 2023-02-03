@@ -9,7 +9,7 @@
 | GET    | /brands                | Read all data Brand                                   |
 |        |                        |                                                       |
 | GET    | /customers/info/:id    | Read one data Customer                                |
-| GET    | /customers/login       | Login Customer & generate access token                |
+| POST   | /customers/login       | Login Customer & generate access token                |
 | GET    | /products/info/:id     | Read one data Product                                 |
 |        |                        |                                                       |
 | POST   | /customers/add         | Create data Customer                                  |
