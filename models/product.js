@@ -11,16 +11,18 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       // define association here
-      product.hasMany(models.transaction)
+      product.hasMany(models.order)
+      product.belongsTo(models.category)
+      product.belongsTo(models.brand)
     }
   }
   product.init({
     name: DataTypes.STRING,
-    type: DataTypes.STRING,
-    brand: DataTypes.STRING,
     price: DataTypes.INTEGER,
     stock: DataTypes.INTEGER,
-    image: DataTypes.STRING
+    image: DataTypes.STRING,
+    categoryId: DataTypes.INTEGER,
+    brandId: DataTypes.INTEGER,
   }, {
     hooks: {
       beforeCreate: function (product) {

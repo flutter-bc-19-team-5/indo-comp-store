@@ -1,4 +1,4 @@
-const { product, Sequelize } = require('../models')
+const { product, category, brand, Sequelize } = require('../models')
 const fs = require('fs')
 
 class ProductController {
@@ -8,8 +8,16 @@ class ProductController {
             const operand = Sequelize.Op
             let products = null
 
-            if (search === undefined) products = await product.findAll({ order: [['name', 'ASC']] })
-            else products = await product.findAll({ where: { name: { [operand.like]: `%${search}%` } } })
+            if (search === undefined)
+                products = await product.findAll({
+                    order: [['name', 'ASC']],
+                    include: [category, brand]
+                })
+            else
+                products = await product.findAll({
+                    where: { name: { [operand.like]: `%${search}%` } },
+                    include: [category, brand]
+                })
 
             res.json(products)
         } catch (err) {
@@ -20,7 +28,7 @@ class ProductController {
     static async infoProduct(req, res) {
         const id = +req.params.productId
         try {
-            let response = await product.findByPk(id)
+            let response = await product.findByPk(id, { include: [category, brand] })
             res.json(response)
         } catch (err) {
             res.json({ message: err })
@@ -29,14 +37,14 @@ class ProductController {
 
     static async addProduct(req, res) {
         try {
-            const { name, type, brand, price, stock } = req.body
+            const { name, price, stock, categoryId, brandId } = req.body
             let field = {}
 
             if (req.file === undefined) {
-                field = { name, type, brand, price, stock }
+                field = { name, price, stock, categoryId, brandId }
             } else {
                 const image = req.file.filename
-                field = { name, type, brand, price, stock, image }
+                field = { name, price, stock, categoryId, brandId, image }
             }
 
             let response = await product.create(field)
@@ -69,12 +77,12 @@ class ProductController {
     static async updateProduct(req, res) {
         try {
             const id = +req.params.productId
-            const { name, type, brand, price, stock } = req.body
+            const { name, price, stock, categoryId, brandId } = req.body
             let field = {}
 
             //Check if image will be changed or not
             if (req.file === undefined) {
-                field = { name, type, brand, price, stock }
+                field = { name, price, stock, categoryId, brandId }
             } else {
                 //Delete file in folder public/productImage
                 let data = await product.findByPk(id)
@@ -86,7 +94,7 @@ class ProductController {
                 }
 
                 const image = req.file.filename
-                field = { name, type, brand, price, stock, image }
+                field = { name, price, stock, categoryId, brandId, image }
             }
 
             let response = await product.update(field, { where: { id: id } })

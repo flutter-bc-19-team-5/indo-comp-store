@@ -55,7 +55,7 @@ class CustomerController {
 
             //Delete file in folder public/profileImage
             let data = await customer.findByPk(id)
-            if (data.profileImage !== "https://via.placeholder.com/150") {
+            if (data !== null && data.profileImage !== "https://via.placeholder.com/150") {
                 const path = `./public/profileImage/${data.profileImage}`
                 fs.unlink(path, (err) => {
                     if (err) console.error(err)
@@ -75,9 +75,11 @@ class CustomerController {
             const { name, address, phone, email, password } = req.body
             let field = {}
 
+            //Check if profileImage will be changed or not
             if (req.file === undefined) {
                 field = { name, address, phone, email, password }
             } else {
+                //Delete file in folder public/profileImage
                 let data = await customer.findByPk(id)
                 if (data.profileImage !== "https://via.placeholder.com/150") {
                     const path = `./public/profileImage/${data.profileImage}`
