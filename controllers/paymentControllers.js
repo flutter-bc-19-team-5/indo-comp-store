@@ -1,9 +1,9 @@
-const { payment } = require('../models')
+const { payment, order } = require('../models')
 
 class PaymentController {
     static async getData(req, res) {
         try {
-            let payments = await payment.findAll()
+            let payments = await payment.findAll({ include: order })
             res.json(payments)
         } catch (err) {
             res.json({ message: err })

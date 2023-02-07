@@ -3,7 +3,19 @@ const { order, customer, product, payment } = require('../models')
 class OrderController {
     static async getData(req, res) {
         try {
-            let orders = await order.findAll({include: [customer, product, payment]})
+            let orders = await order.findAll({ include: [customer, product, payment] })
+            res.json(orders)
+        } catch (err) {
+            res.json({ message: err })
+        }
+    }
+
+    static async infoOrder(req, res) {
+        try {
+            let id = +req.params.orderId
+            let orders = await order.findByPk(id, {
+                include: [customer, product, payment]
+            })
             res.json(orders)
         } catch (err) {
             res.json({ message: err })
