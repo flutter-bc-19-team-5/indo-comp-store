@@ -10,6 +10,18 @@ class PaymentController {
         }
     }
 
+    static async infoPayment(req, res) {
+        try {
+            let id = +req.params.paymentId
+            let result = await payment.findByPk(id, {
+                include: order
+            })
+            res.json(result)
+        } catch (err) {
+            res.json({ message: err })
+        }
+    }
+
     static async addPayment(req, res) {
         try {
             const { pay_total, pay_method, status } = req.body
