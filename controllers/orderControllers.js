@@ -13,8 +13,21 @@ class OrderController {
     static async infoOrder(req, res) {
         try {
             let id = +req.params.orderId
-            let orders = await order.findByPk(id, {
+            let orderData = await order.findByPk(id, {
                 include: [customer, product, payment]
+            })
+            res.json(orderData)
+        } catch (err) {
+            res.json({ message: err })
+        }
+    }
+
+    static async infoCustomerOrder(req, res) {
+        try {
+            let id = +req.params.custId
+            let orders = await order.findAll({
+                where: { customerId: id },
+                include: [product, payment]
             })
             res.json(orders)
         } catch (err) {

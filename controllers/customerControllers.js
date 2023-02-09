@@ -104,11 +104,12 @@ class CustomerController {
         try {
             const { email, password } = req.body
             let customerData = await customer.findOne({ where: { email: email } })
+            let accountName = customerData.name
 
             if (customerData) {
                 if (decrypt(password, customerData.password)) {
                     let accessToken = generateToken(customerData)
-                    res.json({ accessToken, role: 'user' })
+                    res.json({ accessToken, account: customerData })
                 } else {
                     res.json({ message: "Incorrect Password" })
                 }
