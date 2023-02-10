@@ -14,9 +14,9 @@ class CustomerController {
             if (searchName === undefined) customers = await customer.findAll({ order: [['name', 'ASC']] })
             else customers = await customer.findAll({ where: { name: { [operand.like]: `%${searchName}%` } } })
 
-            res.json(customers)
+            res.status(200).json(customers)
         } catch (err) {
-            res.json({ message: err })
+            res.status(500).json({ message: err })
         }
     }
 
@@ -24,9 +24,9 @@ class CustomerController {
         const id = +req.params.customerId
         try {
             let response = await customer.findByPk(id)
-            res.json(response)
+            res.status(200).json(response)
         } catch (err) {
-            res.json({ message: err })
+            res.status(500).json({ message: err })
         }
     }
 
@@ -43,9 +43,9 @@ class CustomerController {
             }
 
             let response = await customer.create(field)
-            res.json(response)
+            res.status(200).json(response)
         } catch (err) {
-            res.json({ message: err })
+            res.status(500).json({ message: err })
         }
     }
 
@@ -55,6 +55,9 @@ class CustomerController {
 
             //Delete file in folder public/profileImage
             let data = await customer.findByPk(id)
+            if(!data){
+                res.status(404).json({message: `User with id ${id} not found`})
+            }
             if (data !== null && data.profileImage !== "https://via.placeholder.com/150") {
                 const path = `./public/profileImage/${data.profileImage}`
                 fs.unlink(path, (err) => {
@@ -63,9 +66,9 @@ class CustomerController {
             }
 
             let response = await customer.destroy({ where: { id: id } })
-            res.json(response)
+            res.status(200).json(response)
         } catch (err) {
-            res.json({ message: err })
+            res.status(500).json({ message: err })
         }
     }
 
@@ -81,6 +84,9 @@ class CustomerController {
             } else {
                 //Delete file in folder public/profileImage
                 let data = await customer.findByPk(id)
+                if (!data){
+                    res.status(404).json({message: `User with id ${id} not found`})
+                }
                 if (data.profileImage !== "https://via.placeholder.com/150") {
                     const path = `./public/profileImage/${data.profileImage}`
                     fs.unlink(path, (err) => {
@@ -94,9 +100,9 @@ class CustomerController {
 
             let response = await customer.update(
                 field, { where: { id: id }, individualHooks: true })
-            res.json(response[0])
+            res.status(200).json(response[0])
         } catch (err) {
-            res.json({ message: err })
+            res.status(500).json({ message: err })
         }
     }
 
@@ -104,21 +110,21 @@ class CustomerController {
         try {
             const { email, password } = req.body
             let customerData = await customer.findOne({ where: { email: email } })
-            let accountName = customerData.name
+            // let accountName = customerData.name
 
             if (customerData) {
                 if (decrypt(password, customerData.password)) {
                     let accessToken = generateToken(customerData)
-                    res.json({ accessToken, account: customerData })
+                    res.status(200).json({ accessToken, account: customerData })
                 } else {
-                    res.json({ message: "Incorrect Password" })
+                    res.status(405).json({ message: "Incorrect Password" })
                 }
             } else {
-                res.json({ message: "Member not found" })
+                res.status(404).json({ message: "Member not found" })
             }
 
         } catch (err) {
-            res.json({ message: err })
+            res.status(500).json({ message: err.message || err })
         }
     }
 
