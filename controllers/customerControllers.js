@@ -1,5 +1,5 @@
 const { customer, Sequelize } = require('../models')
-const { decrypt } = require("../helpers/bcrypt")
+const { decrypt, encrypt } = require("../helpers/bcrypt")
 const { generateToken } = require("../helpers/jsonwebtoken")
 
 const fs = require('fs')
@@ -65,8 +65,11 @@ class CustomerController {
                 })
             }
 
-            let response = await customer.destroy({ where: { id: id } })
-            res.status(200).json(response)
+            let state = await customer.destroy({ where: { id: id } })
+            
+            state === 1
+                ? res.status(200).json({ message: `User with id ${id} deleted successfully` })
+                : res.status(403).json({ message: `Couldn\'t delete user with id ${id}` })
         } catch (err) {
             res.status(500).json({ message: err })
         }
@@ -77,32 +80,43 @@ class CustomerController {
             const id = +req.params.customerId
             const { name, address, phone, email, password } = req.body
             let field = {}
-
+            let data = await customer.findByPk(id)
+            if (!data){
+                res.status(404).json({message: `User with id ${id} not found`})
+            }
             //Check if profileImage will be changed or not
             if (req.file === undefined) {
                 field = { name, address, phone, email, password }
+
             } else {
                 //Delete file in folder public/profileImage
-                let data = await customer.findByPk(id)
-                if (!data){
-                    res.status(404).json({message: `User with id ${id} not found`})
-                }
                 if (data.profileImage !== "https://via.placeholder.com/150") {
                     const path = `./public/profileImage/${data.profileImage}`
                     fs.unlink(path, (err) => {
                         if (err) console.error(err)
                     })
                 }
-
                 const profileImage = req.file.filename
                 field = { name, address, phone, email, password, profileImage }
             }
+            if(req.body.newPassword){
+                if (!decrypt(password, data.password)) {
+                    res.status(403).json({ message: 'Invalid password.' })
+                    return
+                }
+                field.password = encrypt(req.body.newPassword)
+            } else {
+                field.password = data.password
+            }
 
-            let response = await customer.update(
-                field, { where: { id: id }, individualHooks: true })
-            res.status(200).json(response[0])
+            let [state] = await customer.update(field, { where: { id: id }, individualHooks: true })
+
+            state === 1
+                ? res.status(200).json({ message: `User with id ${id} updated successfully` })
+                : res.status(403).json({ message: `Couldn\'t change user with id ${id}` })
+
         } catch (err) {
-            res.status(500).json({ message: err })
+            res.status(500).json({ message: err.message || `${err}` })
         }
     }
 
@@ -114,10 +128,11 @@ class CustomerController {
 
             if (customerData) {
                 if (decrypt(password, customerData.password)) {
+
                     let accessToken = generateToken(customerData)
                     res.status(200).json({ accessToken, account: customerData })
                 } else {
-                    res.status(405).json({ message: "Incorrect Password" })
+                    res.status(401).json({ message: "Incorrect Password" })
                 }
             } else {
                 res.status(404).json({ message: "Member not found" })

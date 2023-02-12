@@ -46,11 +46,11 @@ module.exports = (sequelize, DataTypes) => {
         if (customer.profileImage === undefined)
           customer.profileImage = "https://via.placeholder.com/150"
       },
-      beforeUpdate: function (customer, field) {
-        if (field.fields.includes("password")) {
-          customer.password = encrypt(customer.password)
-        }
-      }
+      // beforeUpdate: function (customer, field) {
+      //   if (field.fields.includes("password")) {
+      //     customer.password = encrypt(customer.password)
+      //   }
+      // }
     },
     sequelize,
     modelName: 'customer',
